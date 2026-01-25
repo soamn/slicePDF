@@ -1,0 +1,28 @@
+name: Release
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest, ubuntu-22.04, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: build app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__ # The tag name
+          releaseName: "App Release v__VERSION__"
