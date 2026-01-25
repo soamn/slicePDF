@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/src/App.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tauri App</title>
+  </head>
+  <body>
+    <div>
+      <dotlottie-wc
+        class="hero-animation"
+        backgroundcolor="#15181B"
+        src="./splash.json"
+        preserveAspectRatio="xMidYMid meet"
+        speed="1"
+        autoplay
+      >
+      </dotlottie-wc>
+    </div>
+    <script
+      type="module"
+      src="https://unpkg.com/@lottiefiles/dotlottie-wc@latest/dist/dotlottie-wc.js"
+    ></script>
+
+    <script type="module">
+      const lottie = document.querySelector("dotlottie-wc");
+
+      window.addEventListener("resize", () => {
+        lottie.style.display = "none";
+        requestAnimationFrame(() => {
+          lottie.style.display = "block";
+        });
+      });
+    </script>
+  </body>
+</html>

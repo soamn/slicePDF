@@ -1,0 +1,188 @@
+{
+  "tools": [
+    {
+      "id": "pdf-to-image",
+      "title": "PDF to Image",
+      "description": "Transform PDF pages into high-quality JPG, PNG, or WebP images",
+      "icon": "FileImage",
+      "color": "primary",
+      "link": "/pdf-to-image",
+      "mascot": "mascot/small-working-en.png",
+      "tags": [
+        "pdf",
+        "convert",
+        "export",
+        "jpg",
+        "png",
+        "webp",
+        "extract images",
+        "picture"
+      ]
+    },
+    {
+      "id": "image-to-pdf",
+      "title": "Image to PDF",
+      "description": "Convert and combine multiple images into a professional PDF document",
+      "icon": "Image",
+      "color": "accent",
+      "link": "/image-to-pdf",
+      "mascot": "mascot/working-en.png",
+      "tags": [
+        "image",
+        "jpg to pdf",
+        "png to pdf",
+        "convert",
+        "make pdf",
+        "photos",
+        "gallery"
+      ]
+    },
+    {
+      "id": "merge-pdf",
+      "title": "Organize & Merge PDF",
+      "mascot": "mascot/zesty-en.png",
+      "description": "Merge multiple files, reorder pages, or split a single PDF into parts",
+      "icon": "Combine",
+      "color": "teal",
+      "link": "/merge-pdf",
+      "tags": [
+        "pdf",
+        "combine",
+        "join",
+        "split",
+        "reorder",
+        "organize",
+        "pages",
+        "separate"
+      ]
+    },
+    {
+      "id": "merge-image-with-pdf",
+      "title": "Mixed Media Merger",
+      "description": "Seamlessly combine PDFs and images into a single unified PDF",
+      "icon": "Combine",
+      "color": "coral",
+      "mascot": "mascot/small-en.png",
+
+      "link": "/merge-image-with-pdf",
+      "tags": [
+        "pdf",
+        "image",
+        "mixed",
+        "combine",
+        "attach",
+        "append",
+        "portfolio",
+        "unified"
+      ]
+    },
+    {
+      "id": "compress-pdf",
+      "title": "Compress PDF",
+      "description": "Significantly reduce file size while preserving document quality",
+      "icon": "Minimize2",
+      "color": "primary",
+      "mascot": "mascot/angry-en.png",
+      "link": "/compress-pdf",
+      "tags": [
+        "pdf",
+        "shrink",
+        "reduce size",
+        "smaller",
+        "optimize",
+        "mb to kb",
+        "fast load"
+      ]
+    },
+    {
+      "id": "rotate-pdf",
+      "title": "Rotate PDF",
+      "description": "Fix orientation issues by rotating specific pages of the document",
+      "icon": "RotateCw",
+      "color": "primary",
+      "link": "/rotate-pdf",
+      "mascot": "mascot/angry-en.png",
+      "tags": [
+        "pdf",
+        "turn",
+        "orientation",
+        "upside down",
+        "landscape",
+        "portrait",
+        "flip"
+      ]
+    },
+    {
+      "id": "protect-pdf",
+      "title": "Protect PDF",
+      "description": "Secure sensitive documents with industrial-grade password encryption",
+      "icon": "Lock",
+      "color": "accent",
+      "link": "/protect-pdf",
+      "mascot": "mascot/stress-en.png",
+      "tags": [
+        "pdf",
+        "security",
+        "password",
+        "encrypt",
+        "lock",
+        "private",
+        "confidential"
+      ]
+    },
+    {
+      "id": "decrypt-pdf",
+      "title": "Unlock PDF",
+      "mascot": "mascot/stress-en.png",
+      "description": "Remove passwords and restrictions from protected PDF files",
+      "icon": "Unlock",
+      "color": "teal",
+      "link": "/decrypt-pdf",
+      "tags": [
+        "pdf",
+        "remove password",
+        "unlock",
+        "decrypt",
+        "permission",
+        "open locked"
+      ]
+    },
+    {
+      "id": "resize-image",
+      "title": "Resize Image",
+      "description": "Adjust image dimensions or scale by percentage for any requirement",
+      "icon": "ImageDown",
+      "color": "teal",
+      "mascot": "mascot/small-en.png",
+      "link": "/resize-image",
+      "tags": [
+        "image",
+        "resize",
+        "dimensions",
+        "width",
+        "height",
+        "scale",
+        "resizer",
+        "crop"
+      ]
+    },
+    {
+      "id": "compress-image",
+      "title": "Compress Image",
+      "description": "Optimize image file sizes for faster web loading and easier sharing",
+      "icon": "FileOutput",
+      "color": "coral",
+      "mascot": "mascot/zesty-en.png",
+      "link": "/compress-image",
+      "tags": [
+        "image",
+        "shrink",
+        "optimize",
+        "reduce size",
+        "smaller",
+        "quality",
+        "web ready"
+      ]
+    }
+  ]
+}

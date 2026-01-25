@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  /* This registers --color-primary so you can use bg-primary, text-primary, etc. */
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary: #f1f5f9;
+  --color-secondary-hover: #e2e8f0;
+  --color-secondary-foreground: #0f172a;
+
+  --color-warm: #ffaa33;
+  --color-warm-hover: #f4bb44;
+  --color-warm-foreground: #ff5f1f;
+
+  --color-border: #e5e7eb;
+  --color-muted: #64748b;
+  --color-background: #ffffff;
+
+  /* You can also define your font here */
+  --font-sans: "Inter", ui-sans-serif, system-ui;
+}
+
+/* Keep your standard CSS resets or base styles outside the theme block */
+#root {
+  @apply font-sans;
+  min-height: 100vh;
+  --rt-color-white: #fff;
+  --rt-color-dark: #222;
+  --rt-color-success: #8dc572;
+  --rt-color-error: #be6464;
+  --rt-color-warning: #f0ad4e;
+  --rt-color-info: #337ab7;
+  --rt-opacity: 0.9;
+  --rt-transition-show-delay: 0.15s;
+  --rt-transition-closing-delay: 0.15s;
+}
+dotlottie-wc {
+  height: 100svh;
+}
+dotlottie-wc.hero-animation {
+  width: 100dvw;
+  height: 100svh;
+  display: block;
+}
+
+.react-tooltip {
+  z-index: 100 !important;
+}
