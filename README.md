@@ -1,7 +1,13 @@
-# Tauri + React + Typescript
+# 📄 SlicePDF
+[![Release](https://img.shields.io/github/v/release/soamn/slicePDF?display_name=tag&style=for-the-badge)](https://github.com/soamn/slicePDF/releases/latest)
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+**SlicePDF** is a lightweight, cross-platform desktop application designed to [Describe core function, e.g., split and merge PDF files with zero privacy leaks]. Built with Tauri and Rust for maximum performance and security.
 
-## Recommended IDE Setup
+## 📦 Installation
+Download the installer for your operating system from the [Latest Releases](https://github.com/soamn/slicePDF/releases/latest) page.
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+| Platform | Installer Type | Instructions |
+| :--- | :--- | :--- |
+| **Windows** | `.msi` | Run the installer. (Ignore SmartScreen "More Info" -> "Run anyway") |
+| **macOS** | `.dmg` | Drag to Applications. |
+| **Linux** | `.AppImage` | `chmod +x` and run. |
