@@ -1,4 +1,4 @@
-import { open } from "@tauri-apps/plugin-dialog";
+import { message, open } from "@tauri-apps/plugin-dialog";
 import * as pdfJs from "pdfjs-dist";
 import { useEffect, useRef, useState } from "react";
 import workerSrc from "pdfjs-dist/build/pdf.worker.min.mjs?url";
@@ -64,7 +64,7 @@ const MergeImageWithPdf = () => {
       if (mode === "pdf") {
         const isEncrypted = await checkEncrypted(path);
         if (isEncrypted) {
-          alert(
+          message(
             "PDF at " + activePath + " is Encrypted Consider Decrypting First",
           );
           return;
@@ -132,10 +132,10 @@ const MergeImageWithPdf = () => {
     setLoading(true);
     try {
       await invoke("merge_all", { instructions, fileMap });
-      alert("Successfully merged!");
+      message("Successfully merged!");
     } catch (e) {
       setLoading(false);
-      alert("Error: " + e);
+      message("Error: " + e);
     } finally {
       setLoading(false);
     }
@@ -204,7 +204,7 @@ const MergeImageWithPdf = () => {
       {pages.length > 0 ? (
         <div
           ref={parent}
-          className="grid grid-cols-6 gap-4 p-4 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50"
+          className="grid grid-cols-6 gap-4 p-4 border-2 border-dashed draggable-container  border-gray-200 rounded-xl bg-gray-50/50"
         >
           {pages.map((page, index) => {
             const source = sourceFiles[page.fileId];

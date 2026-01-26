@@ -1,7 +1,7 @@
 import { ToolCard } from "../components/ToolCard";
 import { Tool } from "../types/tools";
 import toolData from "../data/tools.json";
-import { open } from "@tauri-apps/plugin-dialog";
+import { message, open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { useState } from "react";
 import SelectedPdfCard from "../components/SelectedPdfCard";
@@ -27,7 +27,7 @@ const ProtectPdf = () => {
 
     if (path === null) {
       clearPdf();
-      alert("Upload Failed");
+      message("Upload Failed");
       return;
     }
     setInputPath(path);
@@ -52,10 +52,10 @@ const ProtectPdf = () => {
           setInputPath(tempPath);
         }
         if ("Message" in result) {
-          alert(result.Message.message);
+          message(result.Message.message);
         }
       } catch (err) {
-        alert("Invalid Password");
+        message("Invalid Password");
         clearPdf();
         return;
       }
@@ -78,7 +78,7 @@ const ProtectPdf = () => {
       });
 
       setShowDialog(false);
-      alert(result);
+      message(String(result));
     } catch (err) {
       console.log(err);
     } finally {

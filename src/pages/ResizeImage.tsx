@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { open } from "@tauri-apps/plugin-dialog";
+import { message, open } from "@tauri-apps/plugin-dialog";
 import { readFile } from "@tauri-apps/plugin-fs";
 import { invoke } from "@tauri-apps/api/core";
 import { ToolCard } from "../components/ToolCard";
@@ -56,9 +56,9 @@ const ResizeImage = () => {
         height: mode === "dimensions" ? dimensions.height : null,
         percentage: mode === "percentage" ? dimensions.percentage : null,
       });
-      alert("Image resized successfully!");
+      message("Image resized successfully!");
     } catch (error) {
-      alert("Error resizing image: " + error);
+      message("Error resizing image: " + error);
     } finally {
       setLoading(false);
     }

@@ -1,7 +1,7 @@
 import { ToolCard } from "../components/ToolCard";
 import { Tool } from "../types/tools";
 import toolData from "../data/tools.json";
-import { open } from "@tauri-apps/plugin-dialog";
+import { message, open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { useEffect, useRef, useState } from "react";
 import * as pdfJs from "pdfjs-dist";
@@ -53,7 +53,7 @@ const RotatePdfPages = () => {
       if (err.name === "PasswordException" && err.code === 1) {
         const password = await requestPassword();
         if (password === null) {
-          alert("no pass provided");
+          message("no pass provided");
           return;
         } else {
           try {
@@ -64,10 +64,10 @@ const RotatePdfPages = () => {
             });
             if ("Message" in result) {
               clearPdf();
-              alert(result.Message.message);
+              message(result.Message.message);
             }
           } catch (err) {
-            alert("Invalid Password");
+            message("Invalid Password");
             clearPdf();
           } finally {
             clearPdf();
@@ -137,7 +137,7 @@ const RotatePdfPages = () => {
         instructions: processingPayload,
       });
 
-      alert(result);
+      message(String(result));
     } catch (error) {
     } finally {
       setLoading(false);

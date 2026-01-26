@@ -1,7 +1,7 @@
 import { ToolCard } from "../components/ToolCard";
 import { Tool } from "../types/tools";
 import toolData from "../data/tools.json";
-import { open } from "@tauri-apps/plugin-dialog";
+import { message, open } from "@tauri-apps/plugin-dialog";
 import * as pdfJs from "pdfjs-dist";
 import { useEffect, useRef, useState } from "react";
 import workerSrc from "pdfjs-dist/build/pdf.worker.min.mjs?url";
@@ -71,11 +71,11 @@ const MergePdf = () => {
             temp: false,
           });
           if ("Message" in result) {
-            alert(result.Message.message);
+            message(result.Message.message);
             continue;
           }
         } catch (err) {
-          alert("Invalid Password or Decryption Failed");
+          message("Invalid Password or Decryption Failed");
           continue;
         }
       }
@@ -101,8 +101,7 @@ const MergePdf = () => {
           });
         }
       } catch (err) {
-        console.error("Error loading PDF into viewer:", err);
-        alert(
+        message(
           `Could not load ${path}. It might be corrupted or still protected.`,
         );
       }
@@ -140,7 +139,7 @@ const MergePdf = () => {
         fileMap: pdfMapping,
       });
       setLoading(false);
-      alert(result);
+      message(String(result));
       clearPdfs();
     } catch (error) {
       setLoading(false);
@@ -210,7 +209,7 @@ const MergePdf = () => {
       {pages.length > 0 && (
         <div
           ref={parent}
-          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 p-4 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50 "
+          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 p-4 draggable-container border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50 "
         >
           {pages.map((page, index) => {
             const source = sourcePdfs[page.pdfId];

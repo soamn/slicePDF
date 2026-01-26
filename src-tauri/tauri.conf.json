@@ -13,18 +13,18 @@
   "app": {
     "windows": [
       {
-        "title": "SlicePDF",
+        "title": "",
         "label": "main",
         "width": 800,
         "height": 600,
-        "decorations": false,
+        "decorations": true,
         "visible": false
       },
       {
-        "title": "SlicePDF",
+        "title": "",
         "label": "splash",
         "url": "splashscreen.html",
-        "decorations": false,
+        "decorations": true,
         "visible": true
       }
     ],

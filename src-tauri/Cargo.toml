@@ -20,7 +20,7 @@ incremental = true # Compile your binary in smaller steps.
 [profile.release]
 codegen-units = 1 # Allows LLVM to perform better optimization.
 lto = true # Enables link-time-optimizations.
-opt-level = "z" # Prioritizes small binary size. Use `3` if you prefer speed.
+opt-level = "s" # Prioritizes small binary size. Use `3` if you prefer speed.
 panic = "unwind" # Higher performance by disabling panic handlers.
 
 [build-dependencies]

@@ -1,6 +1,6 @@
 import { ToolCard } from "../components/ToolCard";
 import toolData from "../data/tools.json";
-import { open } from "@tauri-apps/plugin-dialog";
+import { message, open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { readFile } from "@tauri-apps/plugin-fs";
 import { useState, useEffect } from "react";
@@ -97,12 +97,12 @@ const ImageToPdf = () => {
         });
       }
 
-      alert(result); // This will show the "Success: PDF created..." message from Rust
+      message(result); // This will show the "Success: PDF created..." message from Rust
       clearAll();
     } catch (e) {
       // If the user cancels the dialog, Rust returns "Save cancelled" as an Err
       if (e !== "Save cancelled") {
-        alert("Error: " + e);
+        message("Error: " + e);
       }
     } finally {
       setLoading(false);

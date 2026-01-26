@@ -1,7 +1,7 @@
 import { ToolCard } from "../components/ToolCard";
 import { Tool } from "../types/tools";
 import toolData from "../data/tools.json";
-import { open } from "@tauri-apps/plugin-dialog";
+import { message, open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { useState } from "react";
 import SelectedPdfCard from "../components/SelectedPdfCard";
@@ -25,7 +25,7 @@ const DecryptPdf = () => {
 
     if (path === null) {
       clearPdf();
-      alert("Upload Failed");
+      message("Upload Failed");
       return;
     }
     setInputPath(path);
@@ -45,17 +45,17 @@ const DecryptPdf = () => {
           temp: false,
         });
         if ("Message" in result) {
-          alert(result.Message.message);
+          message(result.Message.message);
         }
       } catch (err) {
-        alert("Invalid Password");
+        message("Invalid Password");
       } finally {
         clearPdf();
         setLoading(false);
         return;
       }
     } else {
-      alert("PDF is Already Unlocked");
+      message("PDF is Already Unlocked");
       clearPdf();
     }
     return;

@@ -12,15 +12,19 @@
     "core:window:allow-close",
     "core:window:allow-minimize",
     "core:window:allow-maximize",
-    "shell:allow-execute",
     {
       "identifier": "shell:allow-execute",
       "allow": [
+        {
+          "name": "resources/binaries/*.exe",
+          "sidecar": true
+        },
         {
           "name": "resources/binaries/*",
           "sidecar": true
         }
       ]
-    }
+    },
+    "shell:default"
   ]
 }

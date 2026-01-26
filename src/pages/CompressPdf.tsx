@@ -1,7 +1,7 @@
 import { ToolCard } from "../components/ToolCard";
 import { Tool } from "../types/tools";
 import toolData from "../data/tools.json";
-import { open } from "@tauri-apps/plugin-dialog";
+import { message, open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { useState } from "react";
 import Loader from "../components/Loading";
@@ -21,7 +21,7 @@ const CompressPdf = () => {
     if (!path) {
       return;
     } else if (path == null) {
-      alert("invalid path");
+      message("invalid path");
       return;
     }
     setInputPath(path);
@@ -44,10 +44,10 @@ const CompressPdf = () => {
 
         if ("Message" in result) {
           clearPdf();
-          alert(result.Message.message);
+          message(result.Message.message);
         }
       } catch (err) {
-        alert("Invalid Password");
+        message("Invalid Password");
         clearPdf();
       } finally {
         clearPdf();

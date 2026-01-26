@@ -1,13 +1,11 @@
-import { X, Search, ArrowLeft, Circle } from "lucide-react";
+import { X, Search, ArrowLeft } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { Window } from "@tauri-apps/api/window";
 
 import { Tool } from "../types/tools";
 import toolData from "../data/tools.json";
 import { ToolCard } from "./ToolCard";
 export const Header = () => {
-  const appWindow = Window.getCurrent();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -67,8 +65,7 @@ export const Header = () => {
       data-tauri-drag-region
       className="w-full bg-transparent backdrop-blur-sm sticky top-0 z-50"
     >
-      <div className=" mx-auto px-4 h-16 flex items-center  justify-between ">
-        {/* LEFT */}
+      <div className="mx-auto px-4 h-16 grid grid-cols-3 items-center">
         <div className="flex space-x-1">
           {isHome ? (
             <>
@@ -95,10 +92,9 @@ export const Header = () => {
             </span>
           </Link>
         </div>
-
         <form
           ref={searchRef}
-          className="relative flex-1 max-w-lg"
+          className="relative flex-1 max-w-lg justify-self-center"
           onSubmit={(e) => e.preventDefault()}
         >
           <div className="relative flex items-center">
@@ -141,17 +137,6 @@ export const Header = () => {
             </div>
           )}
         </form>
-
-        <button onClick={() => appWindow.close()} className="w-fit ">
-          <Circle
-            data-tooltip-variant="error"
-            data-tooltip-id="tooltip"
-            data-tooltip-content={"close"}
-            className="absolute top-2 right-2 fill-red-400"
-            stroke="none"
-            size={20}
-          />
-        </button>
       </div>
     </header>
   );

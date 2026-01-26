@@ -1,7 +1,7 @@
 import { ToolCard } from "../components/ToolCard";
 import { Tool } from "../types/tools";
 import toolData from "../data/tools.json";
-import { open } from "@tauri-apps/plugin-dialog";
+import { message, open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { useState } from "react";
 import { listen } from "@tauri-apps/api/event";
@@ -37,7 +37,7 @@ const PdfToImage = () => {
     if (!path) {
       return;
     } else if (path == null) {
-      alert("invalid path");
+      message("invalid path");
       return;
     }
     setInputPath(path);
@@ -58,10 +58,10 @@ const PdfToImage = () => {
         });
 
         if ("Message" in result) {
-          alert(result.Message.message);
+          message(result.Message.message);
         }
       } catch (err) {
-        alert("Invalid Password");
+        message("Invalid Password");
       } finally {
         clearPdf();
       }
@@ -143,10 +143,10 @@ const PdfToImage = () => {
         });
       }
 
-      alert(`Successfully converted ${pdf.numPages} pages!`);
+      message(`Successfully converted ${pdf.numPages} pages!`);
     } catch (error) {
       console.error(error);
-      alert("Conversion failed: " + error);
+      message("Conversion failed: " + error);
     } finally {
       setLoading(false);
     }
@@ -165,13 +165,13 @@ const PdfToImage = () => {
   useEffect(() => {
     const done = listen<string>("pdf-to-img", (e) => {
       setLoading(false);
-      alert(e.payload);
+      message(e.payload);
       clearPdf();
     });
     const error = listen<string>("pdf-to-img-err", (_e) => {
       setLoading(false);
       clearPdf();
-      alert("Failed To convert");
+      message("Failed To convert");
     });
     return () => {
       done.then((f) => f());
