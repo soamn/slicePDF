@@ -1,8 +1,8 @@
 {
   "$schema": null,
   "productName": "slicePDF",
-  "version": "0.1.0",
-  "identifier": "com.slicedapple.slicepdf",
+  "version": "0.1.1",
+  "identifier": "com.slicedapplestudios.slicepdf",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -13,6 +13,7 @@
   "app": {
     "windows": [
       {
+        "title": "SlicePDF",
         "label": "main",
         "width": 800,
         "height": 600,
@@ -20,8 +21,9 @@
         "visible": false
       },
       {
+        "title": "SlicePDF",
         "label": "splash",
-        "url": "/splashscreen",
+        "url": "splashscreen.html",
         "decorations": false,
         "visible": true
       }
@@ -34,13 +36,18 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "resources": ["resources/binaries/**/*"],
+    "resources": ["resources/binaries/*"],
     "icon": [
       "icons/32x32.png",
+      "icons/64x64.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.icns",
-      "icons/icon.ico"
+      "icons/icon.ico",
+      "icons/Square30x30Logo.png",
+      "icons/Square44x44Logo.png",
+      "icons/Square89x89Logo.png",
+      "icons/icon.png"
     ]
   }
 }

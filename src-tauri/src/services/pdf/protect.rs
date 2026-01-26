@@ -1,9 +1,9 @@
 use lopdf::Document;
 use serde::Serialize;
-use std::process::Command;
-use tauri::path::BaseDirectory;
+use std::path::PathBuf;
 use tauri::{AppHandle, Manager};
 use tauri_plugin_dialog::DialogExt;
+use tauri_plugin_shell::ShellExt;
 
 #[derive(Serialize)]
 pub enum PdfResult {
@@ -12,112 +12,121 @@ pub enum PdfResult {
 }
 
 pub async fn protect_pdf(
-    app: tauri::AppHandle,
+    app: AppHandle,
     input_path: String,
-    user_password: String,
-    owner_password: String,
+    password: String,
 ) -> Result<String, String> {
-    println!("{}", input_path);
+    if !std::path::Path::new(&input_path).exists() {
+        return Err(format!("Input file not found at: {}", input_path));
+    }
+
     let file_path = app
         .dialog()
         .file()
-        .set_file_name("encrypted_by_slicePDF.pdf")
+        .set_file_name("protected.pdf")
         .add_filter("PDF", &["pdf"][..])
         .blocking_save_file();
 
     let save_path = match file_path {
         Some(path) => path.into_path().map_err(|_| "Invalid path")?,
-        _none => return Err("Cancelled".into()),
+        _ => return Err("Cancelled".into()),
     };
 
-    tauri::async_runtime::spawn_blocking(move || {
-        let mut cmd = qpdf_command(&app)?;
+    let save_path_str = save_path.to_string_lossy().to_string();
+    let sidecar_name = "resources/binaries/qpdf";
 
-        cmd.args([
+    let sidecar = app.shell()
+        .sidecar(sidecar_name)
+        .map_err(|e| {
+            let err = format!("[ERROR] Sidecar 'qpdf' not found in bundle. Check tauri.conf.json and binary names. Error: {}", e);
+            println!("{}", err);
+            err
+        })?;
+
+    let output = sidecar
+        .args([
             "--encrypt",
-            &user_password,
-            &owner_password,
+            &password,
+            &password,
             "256",
             "--",
             &input_path,
-            save_path.to_str().ok_or("Invalid output path")?,
-        ]);
+            &save_path_str,
+        ])
+        .output()
+        .await
+        .map_err(|e| format!("[ERROR] Failed to execute qpdf: {}", e))?;
 
-        let status = cmd.status().map_err(|e| e.to_string())?;
-        if !status.success() {
-            return Err("qpdf encryption failed".into());
-        }
-
-        Ok::<(), String>(())
-    })
-    .await
-    .map_err(|e| e.to_string())??;
+    // 3. Detailed Status Check
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        println!("[DEBUG] QPDF Stderr: {}", stderr);
+        println!("[DEBUG] QPDF Stdout: {}", stdout);
+        return Err(format!(
+            "QPDF Error (Code {:?}): {}",
+            output.status.code(),
+            stderr
+        ));
+    }
 
     Ok("PDF encrypted successfully".to_string())
 }
 
 pub async fn decrypt_pdf_service(
-    app: tauri::AppHandle,
+    app: AppHandle,
     input_path: String,
     password: String,
     temp: bool,
 ) -> Result<PdfResult, String> {
-    let save_path: std::path::PathBuf = if temp {
-        let mut path = app
-            .path()
-            .temp_dir()
-            .map_err(|_| "Failed to resolve temp dir")?;
-
+    let save_path: PathBuf = if temp {
+        let mut path = app.path().temp_dir().map_err(|_| "Temp dir error")?;
         path.push("slice_pdf_decrypted.pdf");
         path
     } else {
-        let file_path = app
-            .dialog()
+        app.dialog()
             .file()
             .set_file_name("slice_pdf_decrypted.pdf")
             .add_filter("PDF", &["pdf"][..])
-            .blocking_save_file();
-
-        match file_path {
-            Some(path) => path.into_path().map_err(|_| "Invalid path")?,
-            _ => return Err("Save cancelled".into()),
-        }
+            .blocking_save_file()
+            .ok_or("Save cancelled")?
+            .into_path()
+            .map_err(|_| "Invalid path")?
     };
 
     let save_path_str = save_path.to_string_lossy().to_string();
-    let input_clone = input_path.clone();
-    let save_clone = save_path_str.clone();
-    let password_clone = password.clone();
 
-    tauri::async_runtime::spawn_blocking(move || {
-        let mut cmd = qpdf_command(&app)?;
+    // Use Sidecar for Decryption
+    let output = app
+        .shell()
+        .sidecar("resources/binaries/qpdf")
+        .map_err(|e| e.to_string())?
+        .args([
+            format!("--password={}", password),
+            "--decrypt".to_string(),
+            input_path,
+            save_path_str.clone(),
+        ])
+        .output()
+        .await
+        .map_err(|e| e.to_string())?;
 
-        let output = cmd
-            .arg(format!("--password={}", password_clone))
-            .arg("--decrypt")
-            .arg(&input_clone)
-            .arg(&save_clone)
-            .output()
-            .map_err(|e| e.to_string())?;
-
+    if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr);
         if stderr.contains("invalid password") {
             return Err("Invalid password".into());
         }
+        return Err(stderr.to_string());
+    }
 
-        // 🔥 VERIFY using lopdf
-        let decrypted =
-            Document::load(&save_clone).map_err(|_| "Failed to read decrypted output")?;
+    // 🔥 VERIFY using lopdf (Optional but safe)
+    let decrypted =
+        Document::load(&save_path_str).map_err(|_| "Failed to read decrypted output")?;
 
-        if decrypted.is_encrypted() {
-            let _ = std::fs::remove_file(&save_clone);
-            return Err("Invalid password".into());
-        }
-
-        Ok::<(), String>(())
-    })
-    .await
-    .map_err(|e| e.to_string())??;
+    if decrypted.is_encrypted() {
+        let _ = std::fs::remove_file(&save_path_str);
+        return Err("File is still encrypted".into());
+    }
 
     if temp {
         Ok(PdfResult::TempPath {
@@ -125,30 +134,7 @@ pub async fn decrypt_pdf_service(
         })
     } else {
         Ok(PdfResult::Message {
-            message: "PDF decrypted successfully".to_string(),
+            message: "PDF decrypted successfully".into(),
         })
     }
-}
-
-fn qpdf_command(app: &AppHandle) -> Result<Command, String> {
-    let os = std::env::consts::OS;
-
-    let relative_path = match os {
-        "linux" => "binaries/linux/qpdf",
-        "windows" => "binaries/windows/qpdf.exe",
-        "macos" => "binaries/macos/qpdf",
-        _ => return Err("Unsupported OS".into()),
-    };
-
-    // Use the v2 PathResolver via the Manager trait
-    let qpdf_path = app
-        .path()
-        .resolve(relative_path, BaseDirectory::Resource)
-        .map_err(|e| format!("Failed to resolve qpdf resource: {e}"))?;
-
-    if !qpdf_path.exists() {
-        return Err(format!("Bundled qpdf not found at {:?}", qpdf_path));
-    }
-
-    Ok(Command::new(qpdf_path))
 }

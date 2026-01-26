@@ -12,6 +12,11 @@ import Loader from "../components/Loading";
 import { checkEncrypted } from "../utils/check_encypted";
 import { usePasswordUnlock } from "../contexts/UnlockPdfContext";
 import { PdfResult } from "../types/PdfResult";
+import * as pdfjsLib from "pdfjs-dist";
+import workerSrc from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+import { readFile } from "@tauri-apps/plugin-fs";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;
 
 type ImageFormat = "png" | "jpg" | "webp";
 
@@ -80,12 +85,73 @@ const PdfToImage = () => {
   };
 
   const convertToImage = async () => {
+    if (!inputPath) return;
+
     setLoading(true);
     try {
-      await invoke("pdf_to_img", { inputPath, format: format });
+      // 1. Ask Rust to let the user pick a folder and give us the path back
+      const outputDir = await invoke<string | null>("pick_output_folder", {
+        fileName: fileName,
+      });
+      if (!outputDir) {
+        setLoading(false);
+        return;
+      }
+
+      // 2. Read the PDF file into bytes so pdf.js can use it
+      const fileBytes = await readFile(inputPath);
+      const pdf = await pdfjsLib.getDocument({ data: fileBytes }).promise;
+
+      // 3. Loop through pages and render
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const scale = 2.0; // Adjust for quality (2.0 = High Res)
+        const viewport = page.getViewport({ scale });
+
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        await page.render({ canvasContext: context!, viewport, canvas })
+          .promise;
+
+        // 4. Convert canvas to Blob based on your selected format
+        const mimeType = format === "jpg" ? "image/jpeg" : `image/${format}`;
+        const blob = await new Promise<Blob>((resolve, reject) => {
+          canvas.toBlob(
+            (b) => {
+              if (b) {
+                resolve(b);
+              } else {
+                reject(new Error("Canvas to Blob conversion failed"));
+              }
+            },
+            mimeType,
+            0.95,
+          );
+        });
+        const arrayBuffer = await blob.arrayBuffer();
+        const uint8Array = new Uint8Array(arrayBuffer);
+
+        // 5. Send bytes to Rust to save
+        await invoke("save_rendered_page", {
+          buffer: Array.from(uint8Array), // Tauri IPC accepts arrays
+          pageIndex: i,
+          outputDir,
+          extension: format,
+        });
+      }
+
+      alert(`Successfully converted ${pdf.numPages} pages!`);
+    } catch (error) {
+      console.error(error);
+      alert("Conversion failed: " + error);
+    } finally {
       setLoading(false);
-    } catch (error) {}
+    }
   };
+
   const clearPdf = () => {
     setInputPath(null);
     setFileName("");

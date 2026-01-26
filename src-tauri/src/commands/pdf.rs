@@ -1,103 +1,45 @@
 use crate::services::pdf::{
-    compress, conversion, merge, protect, rotate, MergeInstruction, MergePageInstruction,
-    OutputFormat, PdfResult, RotatePageInstructions,
+    compress, merge, protect, rotate, MergeInstruction, MergePageInstruction, PdfResult,
+    RotatePageInstructions,
 };
 use std::collections::HashMap;
 use std::fs;
-use std::path::{Path, PathBuf};
-use tauri::Emitter as _;
+use std::path::PathBuf;
 use tauri_plugin_dialog::DialogExt;
 
 #[tauri::command]
-pub async fn pdf_to_img(
+pub async fn pick_output_folder(
     app: tauri::AppHandle,
-    input_path: String,
-    format: OutputFormat,
-) -> Result<(), String> {
-    let input_path_clone = input_path.clone();
-    app.dialog().file().pick_folder(move |folder| {
-        let base_output_dir = match folder {
-            Some(path) => match path.into_path() {
-                Ok(p) => p,
-                Err(_) => return,
-            },
-            _none => return,
-        };
+    file_name: String,
+) -> Result<Option<String>, String> {
+    let stem = std::path::Path::new(&file_name)
+        .file_stem()
+        .map(|s| s.to_string_lossy().to_string())
+        .unwrap_or_else(|| "output".to_string());
 
-        tauri::async_runtime::spawn_blocking(move || {
-            let input = std::path::Path::new(&input_path_clone);
+    // In Tauri v2, we can use blocking_pick_folder for simplicity in async commands
+    let folder = app.dialog().file().blocking_pick_folder();
 
-            let stem = match input.file_stem() {
-                Some(s) => s.to_string_lossy().to_string(),
-                _none => return,
-            };
+    if let Some(path_buf) = folder {
+        let final_path = path_buf.into_path().map_err(|e| e.to_string())?.join(stem);
+        fs::create_dir_all(&final_path).map_err(|e| e.to_string())?;
+        return Ok(Some(final_path.to_string_lossy().to_string()));
+    }
 
-            let output_dir: PathBuf = base_output_dir.join(stem);
-
-            if let Err(_e) = fs::create_dir_all(&output_dir) {
-                return;
-            }
-            match conversion::pdf_to_img(&app, input_path, &output_dir, format) {
-                Ok(msg) => {
-                    let _ = app.emit("pdf-to-img", msg);
-                }
-                Err(e) => {
-                    let _ = app.emit("pdf-to-img-err", e.to_string());
-                }
-            }
-        });
-    });
-    Ok(())
+    Ok(None)
 }
 
 #[tauri::command]
-pub fn image_to_pdf(
-    app: tauri::AppHandle,
-    input_path: String,
-    file_name: String,
+pub async fn save_rendered_page(
+    buffer: Vec<u8>,
+    page_index: usize,
+    output_dir: String,
+    extension: String,
 ) -> Result<(), String> {
-    let app_clone = app.clone();
-    let base_name = Path::new(&file_name)
-        .file_stem()
-        .and_then(|s| s.to_str())
-        .unwrap_or("output");
-    app.dialog()
-        .file()
-        .set_file_name(base_name)
-        .add_filter("PDF", &["pdf"][..])
-        .save_file(move |file| {
-            let save_path: PathBuf = match file {
-                Some(path) => match path.into_path() {
-                    Ok(p) => p,
-                    Err(_) => {
-                        let _ = app_clone.emit("img-to-pdf-error", "Invalid save path");
-                        return;
-                    }
-                },
-                _name => {
-                    let _ = app_clone.emit("img-to-pdf-cancelled", "Save cancelled");
-                    return;
-                }
-            };
+    let file_path = PathBuf::from(output_dir).join(format!("page-{}.{}", page_index, extension));
 
-            tauri::async_runtime::spawn_blocking(move || {
-                let input = Path::new(&input_path);
+    fs::write(file_path, buffer).map_err(|e| e.to_string())?;
 
-                match conversion::img_to_pdf(input, &save_path) {
-                    Ok(_) => {
-                        let _ = app_clone.emit(
-                            "img-to-pdf-done",
-                            format!("Image converted to PDF: {}", save_path.display()),
-                        );
-                    }
-                    Err(e) => {
-                        let _ = app_clone.emit("img-to-pdf-error", e.to_string());
-                    }
-                }
-            });
-        });
-
-    // Command returns immediately (as designed)
     Ok(())
 }
 
@@ -145,11 +87,10 @@ pub async fn rotate_pdf_pages(
 pub async fn protect_pdf(
     app: tauri::AppHandle,
     input_path: String,
-    user_password: String,
-    owner_password: String,
+    password: String,
+
 ) -> Result<String, String> {
-    println!("{}", input_path);
-    protect::protect_pdf(app, input_path, user_password, owner_password)
+    protect::protect_pdf(app, input_path, password)
         .await
         .map(|_| "PDF Encrypted Successfully".to_string())
         .map_err(|e| e.to_string())

@@ -1,7 +1,7 @@
 [package]
-name = "slicepdf"
-version = "0.1.0"
-description = "A Tauri App"
+name = "slicePDF"
+version = "0.1.1"
+description = "SlicePDF | Lightweight File manipulation"
 authors = ["SlicedApple"]
 edition = "2021"
 
@@ -20,9 +20,8 @@ incremental = true # Compile your binary in smaller steps.
 [profile.release]
 codegen-units = 1 # Allows LLVM to perform better optimization.
 lto = true # Enables link-time-optimizations.
-opt-level = "s" # Prioritizes small binary size. Use `3` if you prefer speed.
-panic = "abort" # Higher performance by disabling panic handlers.
-strip = true # Ensures debug symbols are removed.
+opt-level = "z" # Prioritizes small binary size. Use `3` if you prefer speed.
+panic = "unwind" # Higher performance by disabling panic handlers.
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
@@ -32,13 +31,12 @@ tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-pdfium-render = "0.8.37"
 tauri-plugin-fs = "2"
-image = "0.25.9"
 tauri-plugin-dialog = "2"
-pdf-converter = "0.1.0"
-lopdf = "0.34"
-pdfcat = "1.0.0-beta.9"
+lopdf = "0.39.0"
 flate2 = "1.1.8"
+image = "0.25.9"
+pdf-converter = "0.1.0"
 jpeg-encoder = "0.6.1"
-libcaesium = "0.20.1"
+libcaesium = "0.20.1" 
+tauri-plugin-shell = "2"

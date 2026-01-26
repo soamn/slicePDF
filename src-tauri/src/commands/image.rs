@@ -1,7 +1,8 @@
 use crate::services::image as image_service;
+use crate::services::image::conversion;
 use caesium::parameters::{CSParameters, ChromaSubsampling};
 use caesium::{compress, compress_to_size};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use tauri_plugin_dialog::DialogExt;
 
 #[tauri::command]
@@ -102,4 +103,75 @@ pub async fn compress_image(
     result.map_err(|e| format!("Compression failed: {}", e))?;
 
     Ok(format!("Image compressed successfully:\n{}", output))
+}
+
+#[tauri::command]
+pub async fn convert_image_to_pdf(
+    app: tauri::AppHandle,
+    input_path: String,
+    file_name: String,
+) -> Result<String, String> {
+    let input = PathBuf::from(input_path);
+    let base_name = Path::new(&file_name)
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .unwrap_or("output");
+
+    let save_path = app
+        .dialog()
+        .file()
+        .set_file_name(base_name)
+        .add_filter("PDF", &["pdf"][..])
+        .blocking_save_file()
+        .ok_or("Save cancelled")?
+        .into_path()
+        .map_err(|_| "Invalid save path".to_string())?;
+    let save_path_for_thread = save_path.clone();
+    tauri::async_runtime::spawn_blocking(move || {
+        conversion::img_to_pdf(&input, &save_path_for_thread).map_err(|e| e.to_string())
+    })
+    .await
+    .map_err(|e| e.to_string())?
+    .map(|_| format!("Success: PDF saved to {}", save_path.display()))
+}
+#[tauri::command]
+pub async fn convert_images_to_pdf(
+    app: tauri::AppHandle,
+    input_paths: Vec<String>,
+    file_name: String,
+) -> Result<String, String> {
+    let base_name = Path::new(&file_name)
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .unwrap_or("output");
+
+    let save_path = app
+        .dialog()
+        .file()
+        .set_file_name(base_name)
+        .add_filter("PDF", &["pdf"][..])
+        .blocking_save_file()
+        .ok_or("Save cancelled")?
+        .into_path()
+        .map_err(|_| "Invalid save path".to_string())?;
+
+    let paths: Vec<PathBuf> = input_paths.into_iter().map(PathBuf::from).collect();
+
+    let count = paths.len();
+
+    let save_path_for_thread = save_path.clone();
+
+    tauri::async_runtime::spawn_blocking(move || {
+        conversion::images_to_pdf(&paths, &save_path_for_thread).map_err(|e| e.to_string())
+    })
+    .await
+    .map_err(|e| e.to_string())?
+    .map(|_| {
+        // 3. Use the original save_path and the stored count here
+        format!(
+            "Success: PDF created with {} images at {}",
+            count,
+            save_path.display()
+        )
+    })
 }

@@ -7,18 +7,21 @@ use tauri::Manager;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            commands::pdf::pdf_to_img,
+            commands::pdf::save_rendered_page,
+            commands::pdf::pick_output_folder,
             commands::pdf::compress_pdf,
-            commands::pdf::image_to_pdf,
             commands::pdf::merge_pdf,
             commands::pdf::merge_all,
             commands::pdf::rotate_pdf_pages,
             commands::pdf::protect_pdf,
             commands::pdf::decrypt_pdf,
+            commands::image::convert_image_to_pdf,
+            commands::image::convert_images_to_pdf,
             commands::image::compress_image,
             commands::image::resize_image
         ])
@@ -33,7 +36,7 @@ pub fn run() {
 
             thread::spawn(move || {
                 // replace with real init logic
-                thread::sleep(Duration::from_secs(4));
+                thread::sleep(Duration::from_secs(3));
 
                 main.show().unwrap();
                 splash.close().unwrap();

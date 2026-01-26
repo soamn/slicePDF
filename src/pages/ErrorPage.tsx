@@ -13,7 +13,7 @@ export default function ErrorPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-backround ">
-      <img src="/sad-en.png" className="max-w-200" alt="sad-en" />
+      <img src="/mascot/sad-en.png" className="max-w-200" alt="sad-en" />
       <h1 className="text-6xl font-bold mb-4">{title}</h1>
       <p className="text-neutral-400 mb-8 text-center max-w-md">{message}</p>
       <Link

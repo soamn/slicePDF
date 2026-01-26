@@ -115,7 +115,7 @@
     {
       "id": "protect-pdf",
       "title": "Protect PDF",
-      "description": "Secure sensitive documents with industrial-grade password encryption",
+      "description": "Secure sensitive documents with  password encryption",
       "icon": "Lock",
       "color": "accent",
       "link": "/protect-pdf",

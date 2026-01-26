@@ -69,17 +69,18 @@ const ProtectPdf = () => {
     setInputPath("");
     setFileName(null);
   };
-  const encryptPdf = async (userPassword: string, ownerPassword: string) => {
+  const encryptPdf = async (password: string) => {
     setLoading(true);
     try {
       const result = await invoke("protect_pdf", {
         inputPath,
-        userPassword,
-        ownerPassword,
+        password,
       });
+
       setShowDialog(false);
       alert(result);
     } catch (err) {
+      console.log(err);
     } finally {
       setLoading(false);
     }
