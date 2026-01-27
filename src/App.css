@@ -48,14 +48,3 @@ dotlottie-wc.hero-animation {
 .react-tooltip {
   z-index: 100 !important;
 }
-
-* {
-  -webkit-user-drag: all !important;
-  box-sizing: border-box;
-}
-
-html,
-body {
-  user-select: all !important;
-  touch-action: all !important;
-}

@@ -1,4 +1,5 @@
 name: Release
+
 on:
   push:
     tags:
@@ -8,42 +9,51 @@ jobs:
   publish:
     permissions:
       contents: write
+
     strategy:
       fail-fast: false
       matrix:
-        # We use ubuntu-22.04 because it supports the webkit2gtk-4.1 required for Tauri v2
-        platform: [macos-latest, ubuntu-22.04, windows-latest]
+        platform: [macos-latest, ubuntu-22.04]
 
     runs-on: ${{ matrix.platform }}
+
     steps:
       - uses: actions/checkout@v4
 
-      # 1. Install Linux-specific dependencies (Required for Tauri v2)
+      # Linux-specific dependencies (required for Tauri v2)
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf
 
-      # 2. Setup Node.js
+      # Node.js
       - name: setup node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
-      # 3. INSTALL FRONTEND DEPS (This fixes your 'command not found' error)
+      # Frontend dependencies
       - name: install frontend dependencies
-        run: npm install # Change to 'yarn install' or 'pnpm install' if needed
+        run: npm install
 
-      # 4. Setup Rust
+      # Rust
       - name: install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      # 5. Build and Release
+      # Build + Release
       - name: build app
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v__VERSION__
-          releaseName: "App Release v__VERSION__"
+          tagName: ${{ github.ref_name }}
+          releaseName: "App Release ${{ github.ref_name }}"
+          args: >
+            ${{ matrix.platform == 'ubuntu-22.04'
+              && '--bundles deb,rpm,appimage'
+              || '' }}
