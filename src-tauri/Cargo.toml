@@ -1,6 +1,6 @@
 [package]
 name = "slicePDF"
-version = "0.1.2"
+version = "0.1.3"
 description = "SlicePDF | Lightweight File manipulation"
 authors = ["SlicedApple"]
 edition = "2021"
