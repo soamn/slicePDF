@@ -1,7 +1,7 @@
 {
   "$schema": null,
   "productName": "slicePDF",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "identifier": "com.slicedapplestudios.slicepdf",
   "build": {
     "beforeDevCommand": "npm run dev",
