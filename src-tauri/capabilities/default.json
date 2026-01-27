@@ -16,15 +16,10 @@
       "identifier": "shell:allow-execute",
       "allow": [
         {
-          "name": "resources/binaries/*.exe",
-          "sidecar": true
-        },
-        {
-          "name": "resources/binaries/*",
+          "name": "*",
           "sidecar": true
         }
       ]
-    },
-    "shell:default"
+    }
   ]
 }

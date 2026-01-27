@@ -40,7 +40,7 @@ dotlottie-wc {
   height: 100svh;
 }
 dotlottie-wc.hero-animation {
-  width: 100dvw;
+  width: 100svw;
   height: 100svh;
   display: block;
 }
@@ -49,7 +49,13 @@ dotlottie-wc.hero-animation {
   z-index: 100 !important;
 }
 
-.draggable-container {
-  touch-action: none;
-  user-select: none;
+* {
+  -webkit-user-drag: all !important;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  user-select: all !important;
+  touch-action: all !important;
 }

@@ -14,6 +14,7 @@ import Loader from "../components/Loading";
 import { checkEncrypted } from "../utils/check_encypted";
 import { usePasswordUnlock } from "../contexts/UnlockPdfContext";
 import { PdfResult } from "../types/PdfResult";
+import { Move } from "lucide-react";
 pdfJs.GlobalWorkerOptions.workerSrc = workerSrc;
 
 type SourcePdfMap = Record<
@@ -209,7 +210,7 @@ const MergePdf = () => {
       {pages.length > 0 && (
         <div
           ref={parent}
-          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 p-4 draggable-container border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50 "
+          className="grid  grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 p-4  border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50 "
         >
           {pages.map((page, index) => {
             const source = sourcePdfs[page.pdfId];
@@ -217,25 +218,35 @@ const MergePdf = () => {
 
             return (
               <div
+                onClick={() => toggleSelection(page.id)}
                 key={page.id}
                 className={`
-                  relative flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all group bg-white
-                  ${page.selected ? "border-emerald-400 shadow-sm" : "border-gray-200 opacity-60 grayscale"}
-                `}
+    relative flex flex-col items-center gap-2 p-3
+    rounded-lg border-2 transition-all bg-white
+    ${page.selected ? "border-emerald-400 shadow-sm" : "border-gray-200 opacity-60 grayscale"}
+  `}
               >
+                {/* Drag handle */}
+                <div
+                  data-dnd-handle
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
+                  className="absolute top-0 left-0 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-700 select-none"
+                >
+                  <Move />
+                </div>
+
+                {/* Checkbox */}
                 <div className="absolute top-2 right-2 z-10">
                   <input
                     type="checkbox"
                     className="accent-emerald-500 w-5 h-5 cursor-pointer"
                     checked={page.selected}
-                    onChange={() => toggleSelection(page.id)}
                   />
                 </div>
 
-                <div
-                  className="cursor-grab active:cursor-grabbing w-full flex justify-center"
-                  onClick={() => toggleSelection(page.id)}
-                >
+                {/* Thumbnail */}
+                <div className="w-full flex justify-center">
                   <PdfPageThumbnail
                     pdf={source.pdf}
                     pageNumber={page.pageNumber}
@@ -243,11 +254,9 @@ const MergePdf = () => {
                   />
                 </div>
 
-                <div className="w-full text-center">
-                  <p
-                    className="text-[10px] text-gray-500 truncate px-1"
-                    title={source.filename}
-                  >
+                {/* Text */}
+                <div className="w-full text-center select-none">
+                  <p className="text-[10px] text-gray-500 truncate px-1">
                     {source.filename}
                   </p>
                   <p className="text-xs font-bold text-gray-700">
@@ -318,7 +327,7 @@ function PdfPageThumbnail({
   return (
     <canvas
       ref={canvasRef}
-      className="max-w-full h-auto shadow-sm rounded bg-gray-100"
+      className="max-w-full select-none   h-auto shadow-sm rounded  pointer-events-none"
     />
   );
 }

@@ -33,8 +33,7 @@ pub async fn protect_pdf(
     };
 
     let save_path_str = save_path.to_string_lossy().to_string();
-    let sidecar_name = "resources/binaries/qpdf";
-
+    let sidecar_name = "qpdf";
     let sidecar = app.shell()
         .sidecar(sidecar_name)
         .map_err(|e| {
@@ -95,11 +94,11 @@ pub async fn decrypt_pdf_service(
     };
 
     let save_path_str = save_path.to_string_lossy().to_string();
-
+    let sidecar_name = "qpdf";
     // Use Sidecar for Decryption
     let output = app
         .shell()
-        .sidecar("resources/binaries/qpdf")
+        .sidecar(sidecar_name)
         .map_err(|e| e.to_string())?
         .args([
             format!("--password={}", password),
