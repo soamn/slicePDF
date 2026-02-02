@@ -9,7 +9,7 @@ import Loader from "../components/Loading";
 
 interface ImagePreview {
   path: string;
-  src: string; 
+  src: string;
   name: string;
 }
 
@@ -85,7 +85,7 @@ const ImageToPdf = () => {
 
       if (previews.length === 1) {
         // Rust expects: input_path: String, file_name: String
-        result = await invoke("image_to_pdf", {
+        result = await invoke("convert_image_to_pdf", {
           inputPath: previews[0].path,
           fileName: previews[0].name,
         });
