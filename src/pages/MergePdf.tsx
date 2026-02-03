@@ -11,9 +11,6 @@ import { animations } from "@formkit/drag-and-drop";
 import { invoke } from "@tauri-apps/api/core";
 import NoFilesYet from "../components/NoFilesYet";
 import Loader from "../components/Loading";
-import { checkEncrypted } from "../utils/check_encypted";
-import { usePasswordUnlock } from "../contexts/UnlockPdfContext";
-import { PdfResult } from "../types/PdfResult";
 import { Move } from "lucide-react";
 pdfJs.GlobalWorkerOptions.workerSrc = workerSrc;
 
@@ -36,7 +33,6 @@ type DraggablePage = {
 const MergePdf = () => {
   const [sourcePdfs, setSourcePdfs] = useState<SourcePdfMap>({});
   const [loading, setLoading] = useState<boolean>(false);
-  const { requestPassword } = usePasswordUnlock();
   const [parent, pages, setPages] = useDragAndDrop<
     HTMLDivElement,
     DraggablePage
@@ -52,34 +48,6 @@ const MergePdf = () => {
 
     for (const path of paths) {
       let activePath = path;
-      let isEncrypted;
-
-      try {
-        isEncrypted = await checkEncrypted(path);
-      } catch (e) {
-        console.error("Error checking encryption:", e);
-        continue;
-      }
-
-      if (isEncrypted) {
-        const password = await requestPassword();
-        if (password == null) continue;
-
-        try {
-          const result = await invoke<PdfResult>("decrypt_pdf", {
-            inputPath: path,
-            password,
-            temp: false,
-          });
-          if ("Message" in result) {
-            message(result.Message.message);
-            continue;
-          }
-        } catch (err) {
-          message("Invalid Password or Decryption Failed");
-          continue;
-        }
-      }
 
       try {
         const bytes = await readFile(activePath);

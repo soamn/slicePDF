@@ -9,9 +9,6 @@ import { useEffect } from "react";
 import NoFilesYet from "../components/NoFilesYet";
 import SelectedFileCard from "../components/SelectedPdfCard";
 import Loader from "../components/Loading";
-import { checkEncrypted } from "../utils/check_encypted";
-import { usePasswordUnlock } from "../contexts/UnlockPdfContext";
-import { PdfResult } from "../types/PdfResult";
 import * as pdfjsLib from "pdfjs-dist";
 import workerSrc from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { readFile } from "@tauri-apps/plugin-fs";
@@ -25,7 +22,6 @@ const PdfToImage = () => {
   const [fileName, setFileName] = useState<string>("Unknown.pdf");
   const [format, setFormat] = useState<ImageFormat>("png");
   const [loading, setLoading] = useState<boolean>(false);
-  const { requestPassword } = usePasswordUnlock();
 
   const formats: { value: ImageFormat; label: string; desc: string }[] = [
     { value: "png", label: "PNG", desc: "Best quality, larger size" },
@@ -42,30 +38,6 @@ const PdfToImage = () => {
     }
     setInputPath(path);
     setFileName(path.split(/[\\/]/).pop() ?? "Unknown.pdf");
-    const isEncrypted = await checkEncrypted(path);
-    if (isEncrypted) {
-      const password = await requestPassword();
-      if (password == null) {
-        clearPdf();
-        return;
-      }
-
-      try {
-        const result = await invoke<PdfResult>("decrypt_pdf", {
-          inputPath: path,
-          password,
-          temp: true,
-        });
-
-        if ("Message" in result) {
-          message(result.Message.message);
-        }
-      } catch (err) {
-        message("Invalid Password");
-      } finally {
-        clearPdf();
-      }
-    }
   };
 
   const takePath = async () => {

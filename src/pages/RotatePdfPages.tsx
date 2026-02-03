@@ -10,8 +10,6 @@ import { readFile } from "@tauri-apps/plugin-fs";
 import Loader from "../components/Loading";
 import NoFilesYet from "../components/NoFilesYet";
 import SelectedFileCard from "../components/SelectedPdfCard";
-import { usePasswordUnlock } from "../contexts/UnlockPdfContext";
-import { PdfResult } from "../types/PdfResult";
 
 pdfJs.GlobalWorkerOptions.workerSrc = workerSrc;
 
@@ -33,7 +31,6 @@ const RotatePdfPages = () => {
   const [loading, setLoading] = useState(false);
   const [sourcePdfs, setSourcePdfs] = useState<SourcePdfMap>({});
   const [pages, setPages] = useState<RotatablePage[]>([]);
-  const { requestPassword } = usePasswordUnlock();
   const [fileName, setFileName] = useState<string>("Unknown.pdf");
 
   const openFilePicker = async () => {
@@ -51,28 +48,8 @@ const RotatePdfPages = () => {
       pdf = await pdfJs.getDocument({ data: bytes }).promise;
     } catch (err: any) {
       if (err.name === "PasswordException" && err.code === 1) {
-        const password = await requestPassword();
-        if (password === null) {
-          message("no pass provided");
-          return;
-        } else {
-          try {
-            const result = await invoke<PdfResult>("decrypt_pdf", {
-              inputPath: path,
-              password,
-              temp: false,
-            });
-            if ("Message" in result) {
-              clearPdf();
-              message(result.Message.message);
-            }
-          } catch (err) {
-            message("Invalid Password");
-            clearPdf();
-          } finally {
-            clearPdf();
-          }
-        }
+        message("PDF is password protected ! Use the unlocked version ");
+        return;
       }
     }
     if (pdf == null) return;

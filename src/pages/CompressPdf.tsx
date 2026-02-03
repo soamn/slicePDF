@@ -7,15 +7,11 @@ import { useState } from "react";
 import Loader from "../components/Loading";
 import SelectedFileCard from "../components/SelectedPdfCard";
 import NoFilesYet from "../components/NoFilesYet";
-import { checkEncrypted } from "../utils/check_encypted";
-import { usePasswordUnlock } from "../contexts/UnlockPdfContext";
-import { PdfResult } from "../types/PdfResult";
 
 const CompressPdf = () => {
   const [loading, setLoading] = useState(false);
   const [inputPath, setInputPath] = useState<string | null>();
   const [fileName, setFileName] = useState<string>("Unknown.pdf");
-  const { requestPassword } = usePasswordUnlock();
   const openFilePicker = async () => {
     const path = await takePath();
     if (!path) {
@@ -26,33 +22,6 @@ const CompressPdf = () => {
     }
     setInputPath(path);
     setFileName(path.split(/[\\/]/).pop() ?? "Unknown.pdf");
-    const isEncrypted = await checkEncrypted(path);
-    if (isEncrypted) {
-      const password = await requestPassword();
-
-      if (password == null) {
-        clearPdf();
-        return;
-      }
-
-      try {
-        const result = await invoke<PdfResult>("decrypt_pdf", {
-          inputPath: path,
-          password,
-          temp: true,
-        });
-
-        if ("Message" in result) {
-          clearPdf();
-          message(result.Message.message);
-        }
-      } catch (err) {
-        message("Invalid Password");
-        clearPdf();
-      } finally {
-        clearPdf();
-      }
-    }
   };
   const takePath = async () => {
     const path = await open({

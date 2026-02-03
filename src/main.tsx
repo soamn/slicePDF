@@ -9,7 +9,6 @@ import MergePdf from "./pages/MergePdf";
 import MergeImageWithPdf from "./pages/MergeImageWithPdf";
 import CompressPdf from "./pages/CompressPdf";
 import RotatePdfPages from "./pages/RotatePdfPages";
-import { UnlockPdfProvider } from "./contexts/UnlockPdfContext";
 import ResizeImage from "./pages/ResizeImage";
 import CompressImage from "./pages/compressImage";
 import MainLayout from "./layout";
@@ -42,8 +41,6 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <UnlockPdfProvider>
-      <RouterProvider router={router} />
-    </UnlockPdfProvider>
+    <RouterProvider router={router} />
   </React.StrictMode>,
 );

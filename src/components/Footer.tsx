@@ -11,27 +11,6 @@ export const Footer = () => {
               </span>
             </div>
 
-            {/* <nav className="flex items-center gap-6">
-              <a
-                href="#"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Privacy
-              </a>
-              <a
-                href="#"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Terms
-              </a>
-              <a
-                href="#"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Contact
-              </a>
-            </nav> */}
-
             <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} SlicedApple Studios
             </p>

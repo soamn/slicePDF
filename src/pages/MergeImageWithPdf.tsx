@@ -10,7 +10,6 @@ import { ToolCard } from "../components/ToolCard";
 import { Tool } from "../types/tools";
 import toolData from "../data/tools.json";
 import Loader from "../components/Loading";
-import { checkEncrypted } from "../utils/check_encypted";
 
 pdfJs.GlobalWorkerOptions.workerSrc = workerSrc;
 
@@ -62,13 +61,6 @@ const MergeImageWithPdf = () => {
       const fileName = path.split(/[\\/]/).pop() ?? "file";
 
       if (mode === "pdf") {
-        const isEncrypted = await checkEncrypted(path);
-        if (isEncrypted) {
-          message(
-            "PDF at " + activePath + " is Encrypted Consider Decrypting First",
-          );
-          return;
-        }
         const bytes = await readFile(activePath);
         const pdf = await pdfJs.getDocument({ data: bytes }).promise;
         newSources[fileId] = {
