@@ -5,9 +5,11 @@
 
 ## 📦 Installation
 Download the installer for your operating system from the [Latest Releases](https://github.com/soamn/slicePDF/releases/latest) page.
-
+arch install
+```
+yay -S slicepdf-bin
+```
 | Platform | Installer Type | Instructions |
 | :--- | :--- | :--- |
-| **Windows** | `.msi` | Run the installer. (Ignore SmartScreen "More Info" -> "Run anyway") |
 | **macOS** | `.dmg` | Drag to Applications. |
 | **Linux** | `.AppImage` | `chmod +x` and run. |
