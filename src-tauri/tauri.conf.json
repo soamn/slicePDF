@@ -1,7 +1,7 @@
 {
   "$schema": null,
   "productName": "slicePDF",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "identifier": "com.slicedapplestudios.slicepdf",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -24,7 +24,7 @@
         "title": "",
         "label": "splash",
         "url": "splashscreen.html",
-        "decorations": true,
+        "decorations": false,
         "visible": true
       }
     ],
@@ -36,7 +36,6 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "resources": ["resources/binaries/*"],
     "icon": [
       "icons/32x32.png",
       "icons/64x64.png",

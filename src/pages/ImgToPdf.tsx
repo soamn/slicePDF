@@ -76,9 +76,6 @@ const ImageToPdf = () => {
   const handleConvert = async () => {
     if (previews.length === 0) return;
 
-    // We no longer call 'await save()' here because the Rust backend
-    // now handles the dialog via app.dialog().file().save_file()
-
     setLoading(true);
     try {
       let result: string;

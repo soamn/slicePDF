@@ -112,41 +112,7 @@
         "flip"
       ]
     },
-    {
-      "id": "protect-pdf",
-      "title": "Protect PDF",
-      "description": "Secure sensitive documents with  password encryption",
-      "icon": "Lock",
-      "color": "accent",
-      "link": "/protect-pdf",
-      "mascot": "mascot/stress-en.png",
-      "tags": [
-        "pdf",
-        "security",
-        "password",
-        "encrypt",
-        "lock",
-        "private",
-        "confidential"
-      ]
-    },
-    {
-      "id": "decrypt-pdf",
-      "title": "Unlock PDF",
-      "mascot": "mascot/stress-en.png",
-      "description": "Remove passwords and restrictions from protected PDF files",
-      "icon": "Unlock",
-      "color": "teal",
-      "link": "/decrypt-pdf",
-      "tags": [
-        "pdf",
-        "remove password",
-        "unlock",
-        "decrypt",
-        "permission",
-        "open locked"
-      ]
-    },
+
     {
       "id": "resize-image",
       "title": "Resize Image",

@@ -88,7 +88,6 @@ pub async fn protect_pdf(
     app: tauri::AppHandle,
     input_path: String,
     password: String,
-
 ) -> Result<String, String> {
     protect::protect_pdf(app, input_path, password)
         .await

@@ -36,8 +36,6 @@ const router = createBrowserRouter([
       { path: "/merge-image-with-pdf", element: <MergeImageWithPdf /> },
       { path: "/compress-pdf", element: <CompressPdf /> },
       { path: "/rotate-pdf", element: <RotatePdfPages /> },
-      { path: "/protect-pdf", element: <ProtectPdf /> },
-      { path: "/decrypt-pdf", element: <DecryptPdf /> },
       { path: "/resize-image", element: <ResizeImage /> },
       { path: "/compress-image", element: <CompressImage /> },
     ],

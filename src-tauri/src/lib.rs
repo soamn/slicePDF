@@ -18,8 +18,6 @@ pub fn run() {
             commands::pdf::merge_pdf,
             commands::pdf::merge_all,
             commands::pdf::rotate_pdf_pages,
-            commands::pdf::protect_pdf,
-            commands::pdf::decrypt_pdf,
             commands::image::convert_image_to_pdf,
             commands::image::convert_images_to_pdf,
             commands::image::compress_image,
